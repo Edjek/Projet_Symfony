@@ -1,0 +1,4 @@
+services:
+#    er_box_shadow.example:
+#        class: ER\BoxShadowBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
