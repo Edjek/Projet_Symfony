@@ -1,0 +1,40 @@
+# src/ER/BoxShadowBundle/Resources/config/routing.yml
+
+er_boxshadow_home:
+    path:    /{page}
+    defaults:
+        _controller: ERBoxShadowBundle:Advert:index
+        page:    1
+    requirements:
+        page: \d*
+
+er_boxshadow_view:
+    path:    /advert/{id}
+    defaults:
+        _controller: ERBoxShadowBundle:Advert:view
+    requirements:
+        id: \d+
+
+er_boxshadow_add:
+    path:    /add
+    defaults:
+        _controller: ERBoxShadowBundle:Advert:add
+
+er_boxshadow_edit:
+    path:    /edit/{id}
+    defaults:
+        _controller: ERBoxShadowBundle:Advert:edit
+    requirements:
+        id: \d+
+
+er_boxshadow_delete:
+    path:    /delete/{id}
+    defaults:
+        _controller: ERBoxShadowBundle:Advert:delete
+    requirements:
+        id: \d+
+
+er_box_shadow_mailer:
+    path:    /mailer
+    defaults:
+        _controller:  ERBoxShadowBundle:Container:mailer

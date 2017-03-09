@@ -1,4 +1,10 @@
+parameters:
+    name:  rachid
+
 services:
-#    er_box_shadow.example:
-#        class: ER\BoxShadowBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
+    er_boxshadow_antispam:
+        class: ER\BoxShadowBundle\Antispam\ERAntispam
+        arguments:
+            - '@mailer'
+            - '%locale%'
+            - 50

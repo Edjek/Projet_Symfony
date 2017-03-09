@@ -1,5 +1,6 @@
-er_box_shadow:
-    resource: "@ERBoxShadowBundle/Controller/"
-    type:     annotation
-    prefix:   /
+er_boxshadow:
+    resource: "@ERBoxShadowBundle/Resources/config/routing.yml"
+    prefix:   /box-shadow
+
+
 

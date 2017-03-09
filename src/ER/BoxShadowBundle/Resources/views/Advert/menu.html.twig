@@ -1,0 +1,11 @@
+{# src/ER/BoxShadow/Resources/views/Advert/menu.html.twig #}
+
+<ul class="nav nav-pills nav-stacked">
+    {% for advert in listAdverts %}
+        <li>
+            <a href="{{ path('er_boxshadow_home', {'id': advert.id}) }}">
+                {{ advert.title }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
