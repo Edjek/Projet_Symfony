@@ -64,7 +64,7 @@ class Advert
     /**
      * @ORM\OneToMany(targetEntity="ER\BoxShadowBundle\Entity\Application", mappedBy="advert")
      */
-    private $applications;
+    private $applications; // Notez le « s », une annonce est liée à plusieurs candidatures
 
     /**
      * @ORM\ManyToMany(targetEntity="ER\BoxShadowBundle\Entity\Category", cascade={"persist"})
@@ -78,69 +78,27 @@ class Advert
         $this->applications = new ArrayCollection();
     }
 
-    /**
-     * Add category
-     *
-     * @param Category $category
-     */
     public function addCategory(Category $category)
     {
+        // Ici, on utilise l'ArrayCollection vraiment comme un tableau
         $this->categories[] = $category;
     }
 
-    /**
-     * remove application
-     *
-     * @param Category $category
-     */
     public function removeCategory(Category $category)
     {
+        // Ici on utilise une méthode de l'ArrayCollection, pour supprimer la catégorie en argument
         $this->categories->removeElement($category);
     }
 
-    /**
-     * Get categories
-     *
-     * @return ArrayCollection
-     */
+    // Notez le pluriel, on récupère une liste de catégories ici !
     public function getCategories()
     {
         return $this->categories;
     }
 
-    /**
-     * Add application
-     *
-     * @param Application $application
-     *
-     * @return Advert
-     */
     public function addApplication(Application $application)
     {
         $this->applications[] = $application;
-        $application->setAdvert($this);
-
-        return $this;
-    }
-
-    /**
-     * Remove application
-     *
-     * @param Application $application
-     */
-    public function removeApplication(Application $application)
-    {
-        $this->applications->removeElement($application);
-    }
-
-    /**
-     * Get applications
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getApplications()
-    {
-        return $this->applications;
     }
 
     /**
