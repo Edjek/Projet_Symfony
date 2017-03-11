@@ -14,26 +14,8 @@ class AdvertController extends Controller
 {
     public function indexAction($page)
     {
-        $listAdverts = array(
-            array(
-                'title'   => 'Recherche développpeur Symfony',
-                'id'      => 1,
-                'author'  => 'Alexandre',
-                'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
-                'date'    => new \Datetime()),
-            array(
-                'title'   => 'Mission de webmaster',
-                'id'      => 2,
-                'author'  => 'Hugo',
-                'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
-                'date'    => new \Datetime()),
-            array(
-                'title'   => 'Offre de stage webdesigner',
-                'id'      => 3,
-                'author'  => 'Mathieu',
-                'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
-                'date'    => new \Datetime())
-        );
+        $em = $this->getDoctrine()->getManager();
+        $listAdverts = $em->getRepository("ERBoxShadowBundle:Advert")->findAll();
 
         // Et modifiez le 2nd argument pour injecter notre liste
         return $this->render('ERBoxShadowBundle:Advert:index.html.twig', array(
@@ -150,7 +132,11 @@ class AdvertController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $advert = $em->getRepository("ERBoxShadowBundle:Advert")->find($id);
+        $listAdverts = $em->getRepository("ERBoxShadowBundle:Advert")->findAll();
+        $listAdvertSkill = $em->getRepository("ERBoxShadowBundle:AdvertSkill")->findByAdvert(array('advert' => $advert));
+        $listApplications = $em->getRepository("ERBoxShadowBundle:Application")->findByAdvert(array('advert' => $advert));
 
+    dump($advert->getApplications());
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
@@ -158,18 +144,25 @@ class AdvertController extends Controller
         foreach ($advert->getCategories() as $category) {
             $advert->removeCategory($category);
         }
+        foreach ($advert->getApplications() as $application) {
+            $advert->removeApplication($application);
+        }
+        foreach ($listAdvertSkill as $advertSkill) {
+            $em->remove($advertSkill);
+        }
+        //$em->remove($advert);
 
         $em->flush();
+
+        return $this->render('ERBoxShadowBundle:Advert:index.html.twig', array(
+            'listAdverts' => $listAdverts
+        ));
     }
 
     public function menuAction($limit)
     {
-        // On fixe en dur une liste ici, bien entendu par la suite
-        // on la récupérera depuis la BDD !
-        $listAdverts = array(
-            array('id' => 1, 'title' => 'Recherche développeur Symfony'),
-            array('id' => 2, 'title' => 'Mission de webmaster')
-        );
+        $em = $this->getDoctrine()->getManager();
+        $listAdverts = $em->getRepository("ERBoxShadowBundle:Advert")->findAll();
 
         return $this->render('ERBoxShadowBundle:Advert:menu.html.twig', array(
             // Tout l'intérêt est ici : le contrôleur passe

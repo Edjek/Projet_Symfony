@@ -138,11 +138,11 @@ class Application
     /**
      * Set advert
      *
-     * @param \ER\BoxShadowBundle\Entity\Advert $advert
+     * @param Advert $advert
      *
      * @return Application
      */
-    public function setAdvert(\ER\BoxShadowBundle\Entity\Advert $advert)
+    public function setAdvert(Advert $advert)
     {
         $this->advert = $advert;
 
@@ -152,7 +152,7 @@ class Application
     /**
      * Get advert
      *
-     * @return \ER\BoxShadowBundle\Entity\Advert
+     * @return Advert
      */
     public function getAdvert()
     {
