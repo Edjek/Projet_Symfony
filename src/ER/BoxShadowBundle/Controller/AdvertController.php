@@ -56,6 +56,7 @@ class AdvertController extends Controller
         $advert->setTitle('Recherche développeur Symfony.');
         $advert->setAuthor('Alexandre');
         $advert->setContent("Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…");
+        $advert->setMail('rachid.edjek@gmail.com');
 
         $image = new Image();
         $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
@@ -133,8 +134,8 @@ class AdvertController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $advert = $em->getRepository("ERBoxShadowBundle:Advert")->find($id);
-        $listAdvertSkill = $em->getRepository("ERBoxShadowBundle:AdvertSkill")->findByAdvert(array('advert' => $advert));
-        $listApplications = $em->getRepository("ERBoxShadowBundle:Application")->findByAdvert(array('advert' => $advert));
+        $listAdvertSkill = $em->getRepository("ERBoxShadowBundle:AdvertSkill")->findBy(array('advert' => $advert));
+        $listApplications = $em->getRepository("ERBoxShadowBundle:Application")->findBy(array('advert' => $advert));
 
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
@@ -158,12 +159,30 @@ class AdvertController extends Controller
     public function menuAction($limit)
     {
         $em = $this->getDoctrine()->getManager();
-        $listAdverts = $em->getRepository("ERBoxShadowBundle:Advert")->findAll();
+        $listAdverts = $em->getRepository("ERBoxShadowBundle:Advert")->findBy(
+            array(),
+            array(),
+            3,
+            0
+        );
 
         return $this->render('ERBoxShadowBundle:Advert:menu.html.twig', array(
             // Tout l'intérêt est ici : le contrôleur passe
             // les variables nécessaires au template !
             'listAdverts' => $listAdverts
         ));
+    }
+
+    public function listAction()
+    {
+        $listAdvert = $this
+            ->getDoctrine()
+            ->getEntityManager()
+            ->getRepository('ERBoxShadowBundle:Advert')
+            ->getAdvertWithApplications();
+
+        foreach ($listAdvert as $advert) {
+            $advert->getApplications();
+        }
     }
 }

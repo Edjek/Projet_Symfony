@@ -10,5 +10,24 @@ namespace ER\BoxShadowBundle\Repository;
  */
 class AdvertRepository extends \Doctrine\ORM\EntityRepository
 {
-    
+    public function getAdvertWithApplications()
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->leftJoin('a.applications', 'app')
+            ->addSelect('app');
+
+        return $qb->getQuery()
+        ->getResult();
+    }
+
+    public function getAdvertWithCategories(array $categoryNames)
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->leftJoin('a.categories', 'c')
+            ->addSelect('c');
+        $qb->where($qb->expr()->in('c.name', $categoryNames));
+
+        return $qb->getQuery()
+            ->getResult();
+    }
 }

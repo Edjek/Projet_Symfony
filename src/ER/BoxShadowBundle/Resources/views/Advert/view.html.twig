@@ -54,16 +54,14 @@
             </div>
         {% endif %}
 
-
-    <h2>Liste des postulants</h2>
-    {% if listApplications is not null %}
+    {% if listApplications |length > 0 %}
+        <h2>Liste des postulants</h2>
         {% for application in listApplications %}
             <i>Par {{ application.author }}, le {{ application.date|date('d/m/Y') }}</i>
 
             <div class="well">
                 {{ application.content }}
             </div>
-
         {%  endfor %}
     {% endif %}
 
