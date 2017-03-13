@@ -7,6 +7,7 @@ use ER\BoxShadowBundle\Entity\AdvertSkill;
 use ER\BoxShadowBundle\Entity\Application;
 use ER\BoxShadowBundle\Entity\Image;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -132,31 +133,26 @@ class AdvertController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $advert = $em->getRepository("ERBoxShadowBundle:Advert")->find($id);
-        $listAdverts = $em->getRepository("ERBoxShadowBundle:Advert")->findAll();
         $listAdvertSkill = $em->getRepository("ERBoxShadowBundle:AdvertSkill")->findByAdvert(array('advert' => $advert));
         $listApplications = $em->getRepository("ERBoxShadowBundle:Application")->findByAdvert(array('advert' => $advert));
 
-    dump($advert->getApplications());
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
-
         foreach ($advert->getCategories() as $category) {
             $advert->removeCategory($category);
         }
-        foreach ($advert->getApplications() as $application) {
-            $advert->removeApplication($application);
+        foreach ($listApplications as $application) {
+            $em->remove($application);
         }
         foreach ($listAdvertSkill as $advertSkill) {
             $em->remove($advertSkill);
         }
-        //$em->remove($advert);
+        $em->remove($advert);
 
         $em->flush();
 
-        return $this->render('ERBoxShadowBundle:Advert:index.html.twig', array(
-            'listAdverts' => $listAdverts
-        ));
+        return new RedirectResponse($this->generateUrl('er_boxshadow_home'));
     }
 
     public function menuAction($limit)

@@ -10,18 +10,20 @@
 
     <h2>Liste des annonces</h2>
 
-    <ul>
-        {% for advert in listAdverts %}
-            <li>
-                <a href="{{ path('er_boxshadow_view', {'id': advert.id}) }}">
-                    {{ advert.title }}
-                </a>
-                par {{ advert.author }},
-                le {{ advert.date|date('d/m/Y') }}
-            </li>
-        {% else %}
-            <li>Pas (encore !) d'annonces</li>
-        {% endfor %}
-    </ul>
+    {% if listAdverts|length > 0 %}
+        <ul>
+            {% for advert in listAdverts %}
+                <li>
+                    <a href="{{ path('er_boxshadow_view', {'id': advert.id}) }}">
+                        {{ advert.title }}
+                    </a>
+                    par {{ advert.author }},
+                    le {{ advert.date|date('d/m/Y') }}
+                </li>
+            {% else %}
+                <li>Pas (encore !) d'annonces</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
 {% endblock %}
