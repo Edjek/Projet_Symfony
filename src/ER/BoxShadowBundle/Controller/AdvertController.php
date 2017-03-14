@@ -4,6 +4,7 @@ namespace ER\BoxShadowBundle\Controller;
 
 use ER\BoxShadowBundle\Entity\Advert;
 use ER\BoxShadowBundle\Entity\Image;
+use ER\BoxShadowBundle\Form\AdvertType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -70,28 +71,15 @@ class AdvertController extends Controller
 
     public function addAction(Request $request)
     {
-        $id = 5;
-        $advert = $em = $this->getDoctrine()->getManager()->getRepository(Advert::class)->find($id);
+        $advert = new Advert();
 
-        // On crée le FormBuilder grâce au service form factory
-        $form = $this->get('form.factory')->createBuilder(FormType::class, $advert)
-            ->add('date',      DateType::class)
-            ->add('title',     TextType::class)
-            ->add('content',   TextareaType::class)
-            ->add('author',    TextType::class)
-            ->add('published', CheckboxType::class, array('required' => false))
-            ->add('save',      SubmitType::class)
-            ->getForm();
+        $form = $this->get('form.factory')->create(AdvertType::class, $advert);
 
         // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
-        if ($request->isMethod('POST')) {
-            $form->handleRequest($request);
-
-            if ($form->isValid()) {
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($advert);
                 $em->flush();
-            }
 
             // Ici, on s'occupera de la création et de la gestion du formulaire
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
