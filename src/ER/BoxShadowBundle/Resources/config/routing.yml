@@ -38,3 +38,8 @@ er_box_shadow_mailer:
     path:    /mailer
     defaults:
         _controller:  ERBoxShadowBundle:Container:mailer
+
+er_box_shadow_tester:
+    path:    /test
+    defaults:
+        _controller:  ERBoxShadowBundle:Advert:test

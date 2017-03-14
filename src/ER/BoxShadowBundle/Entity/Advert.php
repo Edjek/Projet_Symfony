@@ -47,25 +47,14 @@ class Advert
     /**
      * @var string
      *
-     * @ORM\Column(name="content", type="text")
+     * @ORM\Column(name="content", type="string", length=255)
      */
     private $content;
 
     /**
-     * @Gedmo\Slug(fields={"title"})
-     * @ORM\Column(name="slug", type="string", length=255, unique=true)
-     */
-    private $slug;
-    /**
-     * @ORM\OneToOne(targetEntity="ER\BoxShadowBundle\Entity\Image", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $image;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="mail", type="string", length=255)
+     * @ORM\Column(name="mail", type="string", length=255, nullable=true)
      */
     private $mail;
 
@@ -73,6 +62,23 @@ class Advert
      * @ORM\Column(name="published", type="boolean")
      */
     private $published = true;
+
+    /**
+     * @ORM\OneToOne(targetEntity="ER\BoxShadowBundle\Entity\Image", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $image;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="ER\BoxShadowBundle\Entity\Category", cascade={"persist"})
+     * @ORM\JoinTable(name="advert_category")
+     */
+    private $categories;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ER\BoxShadowBundle\Entity\Application", mappedBy="advert")
+     */
+    private $applications;
 
     /**
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
@@ -85,14 +91,10 @@ class Advert
     private $nbApplications = 0;
 
     /**
-     * @ORM\OneToMany(targetEntity="ER\BoxShadowBundle\Entity\Application", mappedBy="advert")
+     * @Gedmo\Slug(fields={"title"})
+     * @ORM\Column(name="slug", type="string", length=255, unique=true)
      */
-    private $applications;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="ER\BoxShadowBundle\Entity\Category", cascade={"persist"})
-     */
-    private $categories;
+    private $slug;
 
     public function __construct()
     {

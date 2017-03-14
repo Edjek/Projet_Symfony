@@ -3,33 +3,51 @@
 namespace ER\BoxShadowBundle\Controller;
 
 use ER\BoxShadowBundle\Entity\Advert;
-use ER\BoxShadowBundle\Entity\AdvertSkill;
-use ER\BoxShadowBundle\Entity\Application;
 use ER\BoxShadowBundle\Entity\Image;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AdvertController extends Controller
 {
     public function indexAction($page)
     {
-        $em = $this->getDoctrine()->getManager();
-        $listAdverts = $em->getRepository("ERBoxShadowBundle:Advert")->findAll();
+        if ($page < 1) {
+            throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
+        }
+        $nbPerpage = 3;
 
-        // Et modifiez le 2nd argument pour injecter notre liste
+        $listAdverts = $this->getDoctrine()
+            ->getManager()
+            ->getRepository("ERBoxShadowBundle:Advert")
+            ->getAdverts($page, $nbPerpage);
+
+        dump($listAdverts);
+        $nbPages = ceil(count($listAdverts)/$nbPerpage);
+
+        if ($page > $nbPages) {
+            throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+        }
+
         return $this->render('ERBoxShadowBundle:Advert:index.html.twig', array(
-            'listAdverts' => $listAdverts
+            'listAdverts' => $listAdverts,
+            'nbPages' => $nbPages,
+            'page' => $page
         ));
     }
 
     public function viewAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-        $advert = $em
-            ->getRepository('ERBoxShadowBundle:Advert')
-            ->find($id);
+        $advert = $em->getRepository('ERBoxShadowBundle:Advert')->find($id);
 
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
@@ -52,60 +70,39 @@ class AdvertController extends Controller
 
     public function addAction(Request $request)
     {
-        $advert = new Advert();
-        $advert->setTitle('Recherche développeur Symfony.');
-        $advert->setAuthor('Alexandre');
-        $advert->setContent("Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…");
-        $advert->setMail('rachid.edjek@gmail.com');
+        $id = 5;
+        $advert = $em = $this->getDoctrine()->getManager()->getRepository(Advert::class)->find($id);
 
-        $image = new Image();
-        $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
-        $image->setAlt('Job de rêve');
-
-        $advert->setImage($image);
-
-        $application1 = new Application();
-        $application1->setAuthor('Mehdi');
-        $application1->setContent('Je suis motivé');
-
-        $application2 = new Application();
-        $application2->setAuthor('rachid');
-        $application2->setContent('J\'ai toutes les qualités');
-
-        $application1->setAdvert($advert);
-        $application2->setAdvert($advert);
-
-        $em = $this->getDoctrine()->getManager();
-
-        $listSkills = $em->getRepository("ERBoxShadowBundle:Skill")->findAll();
-
-        foreach ($listSkills as $skill) {
-            $advertSkill = new AdvertSkill();
-            $advertSkill->setAdvert($advert);
-            $advertSkill->setSkill($skill);
-            $advertSkill->setLevel('Expert');
-            $em->persist($advertSkill);
-        }
-
-        $em->persist($advert);
-        $em->persist($application1);
-        $em->persist($application2);
-
-        $em->flush();
+        // On crée le FormBuilder grâce au service form factory
+        $form = $this->get('form.factory')->createBuilder(FormType::class, $advert)
+            ->add('date',      DateType::class)
+            ->add('title',     TextType::class)
+            ->add('content',   TextareaType::class)
+            ->add('author',    TextType::class)
+            ->add('published', CheckboxType::class, array('required' => false))
+            ->add('save',      SubmitType::class)
+            ->getForm();
 
         // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
         if ($request->isMethod('POST')) {
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($advert);
+                $em->flush();
+            }
+
             // Ici, on s'occupera de la création et de la gestion du formulaire
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
 
             // Puis on redirige vers la page de visualisation de cettte annonce
-            return $this->redirectToRoute('er_boxshadow_view', array(
-                'id' => $advert->getId()
-            ));
+            return $this->redirectToRoute('er_boxshadow_view', array('id' => $advert->getId()));
         }
 
-        // Si on n'est pas en POST, alors on affiche le formulaire
-        return $this->render('ERBoxShadowBundle:Advert:add.html.twig');
+        return $this->render('ERBoxShadowBundle:Advert:add.html.twig', array(
+            'form' => $form->createView(),
+        ));
     }
 
     public function editAction($id, Request $request)
@@ -117,12 +114,11 @@ class AdvertController extends Controller
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
 
-        $listCategories = $em->getRepository("ERBoxShadowBundle:Category")->findAll();
+        if ($request->isMethod('POST')) {
+            $request->getSession()->getflashbag()->add('notice', 'Annonce bien modifié');
 
-        foreach ($listCategories as $category) {
-            $advert->addCategory($category);
+            return $this->redirectToRoute('er_boxshadow_view', array('id' => $advert->getId()));
         }
-
         $em->flush();
 
         return $this->render('ERBoxShadowBundle:Advert:edit.html.twig', array(
@@ -140,6 +136,7 @@ class AdvertController extends Controller
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
+
         foreach ($advert->getCategories() as $category) {
             $advert->removeCategory($category);
         }
@@ -161,14 +158,12 @@ class AdvertController extends Controller
         $em = $this->getDoctrine()->getManager();
         $listAdverts = $em->getRepository("ERBoxShadowBundle:Advert")->findBy(
             array(),
-            array(),
-            3,
+            array('date' => 'desc'),
+            $limit,
             0
         );
 
         return $this->render('ERBoxShadowBundle:Advert:menu.html.twig', array(
-            // Tout l'intérêt est ici : le contrôleur passe
-            // les variables nécessaires au template !
             'listAdverts' => $listAdverts
         ));
     }
@@ -177,12 +172,34 @@ class AdvertController extends Controller
     {
         $listAdvert = $this
             ->getDoctrine()
-            ->getEntityManager()
+            ->getManager()
             ->getRepository('ERBoxShadowBundle:Advert')
             ->getAdvertWithApplications();
 
         foreach ($listAdvert as $advert) {
             $advert->getApplications();
         }
+    }
+
+    public function testAction()
+    {
+        $advert = new Advert();
+        $advert->setTitle("Recherche développeur !");
+        $advert->setAuthor('Lucky Luke');
+        $advert->setContent('Tire plus vite que son ombre.');
+        $advert->setMail('luke@gmail.fr');
+
+        $image = new Image();
+        $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
+        $image->setAlt('Job de rêve');
+
+        $advert->setImage($image);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($advert);
+        $em->flush(); // C'est à ce moment qu'est généré le slug
+
+        return new Response('Slug généré : '.$advert->getSlug());
+        // Affiche « Slug généré : recherche-developpeur »
     }
 }
