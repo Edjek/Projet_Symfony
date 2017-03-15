@@ -64,7 +64,7 @@ class Advert
     private $published = true;
 
     /**
-     * @ORM\OneToOne(targetEntity="ER\BoxShadowBundle\Entity\Image", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="ER\BoxShadowBundle\Entity\Image", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $image;
@@ -98,7 +98,7 @@ class Advert
 
     public function __construct()
     {
-        $this->date = date_create();
+        $this->date = new \DateTime();
         $this->categories = new ArrayCollection();
         $this->applications = new ArrayCollection();
     }
@@ -359,7 +359,7 @@ class Advert
     /**
      * @ORM\PreUpdate()
      */
-    public function updatedate()
+    public function updateDate()
     {
         $this->setUpdatedAt(new \DateTime());
     }

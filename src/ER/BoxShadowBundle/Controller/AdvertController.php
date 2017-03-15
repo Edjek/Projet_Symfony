@@ -4,14 +4,9 @@ namespace ER\BoxShadowBundle\Controller;
 
 use ER\BoxShadowBundle\Entity\Advert;
 use ER\BoxShadowBundle\Entity\Image;
+use ER\BoxShadowBundle\Form\AdvertEditType;
 use ER\BoxShadowBundle\Form\AdvertType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,10 +28,6 @@ class AdvertController extends Controller
 
         dump($listAdverts);
         $nbPages = ceil(count($listAdverts)/$nbPerpage);
-
-        if ($page > $nbPages) {
-            throw $this->createNotFoundException("La page ".$page." n'existe pas.");
-        }
 
         return $this->render('ERBoxShadowBundle:Advert:index.html.twig', array(
             'listAdverts' => $listAdverts,
@@ -72,14 +63,13 @@ class AdvertController extends Controller
     public function addAction(Request $request)
     {
         $advert = new Advert();
-
         $form = $this->get('form.factory')->create(AdvertType::class, $advert);
 
         // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($advert);
-                $em->flush();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($advert);
+            $em->flush();
 
             // Ici, on s'occupera de la création et de la gestion du formulaire
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
@@ -96,21 +86,28 @@ class AdvertController extends Controller
     public function editAction($id, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
+
         $advert = $em->getRepository("ERBoxShadowBundle:Advert")->find($id);
 
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
 
-        if ($request->isMethod('POST')) {
-            $request->getSession()->getflashbag()->add('notice', 'Annonce bien modifié');
+        $form = $this->get('form.factory')->create(AdvertEditType::class, $advert);
+
+        // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $em->flush();
+
+            // Ici, on s'occupera de la création et de la gestion du formulaire
+            $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
 
             return $this->redirectToRoute('er_boxshadow_view', array('id' => $advert->getId()));
         }
-        $em->flush();
 
         return $this->render('ERBoxShadowBundle:Advert:edit.html.twig', array(
-            'advert' => $advert
+            'advert' => $advert,
+            'form' => $form->createView(),
         ));
     }
 

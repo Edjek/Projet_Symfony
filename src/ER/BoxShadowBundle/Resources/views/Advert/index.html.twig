@@ -10,6 +10,7 @@
 
     <h2>Liste des annonces</h2>
 
+    {% if listAdverts|length > 0 %}
     <ul>
         {% for advert in listAdverts %}
             <li>
@@ -18,12 +19,15 @@
                 </a>
                 par {{ advert.author }},
                 le {{ advert.date|date('d/m/Y') }}
+                {% if advert.image is not null %}
                 <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}">
+                    {% endif %}
             </li>
         {% else %}
             <li>Pas (encore !) d'annonces</li>
         {% endfor %}
     </ul>
+    {% endif %}
     <ul class="pagination">
         {# On utilise la fonction range(a, b) qui crée un tableau de valeurs entre a et b #}
         {% for p in range(1, nbPages) %}

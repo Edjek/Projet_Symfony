@@ -26,14 +26,4 @@ class CategoryType extends AbstractType
             'data_class' => 'ER\BoxShadowBundle\Entity\Category'
         ));
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return 'er_boxshadowbundle_category';
-    }
-
-
 }
