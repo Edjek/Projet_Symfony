@@ -1,18 +1,26 @@
 {% extends 'ERBoxShadowBundle::layout.html.twig' %}
 
-    {% block body %}
-        <h1>Hi {{ name | upper }} !</h1>
+{% block title %}
+    Supprimer une annonce - {{ parent() }}
+{% endblock %}
 
-        <p>
-            Le Hello World est un grand classique en programmation.
-            Il signifie énormément, car cela veut dire que vous avez
-            réussi à exécuter le programme pour accomplir une tâche simple :
-            afficher ce hello world !
-        </p>
-    {% endblock %}
+{% block body %}
+    <h2>Supprimer une annonce</h2>
 
-    {% block stylesheets %}
-        <style>
+    <p>
+        Etes-vous certain de vouloir supprimer l'annonce "{{ advert.title }}" ?
+    </p>
 
-        </style>
-    {% endblock %}
+    {# On met l'id de l'annonce dans la route de l'action du formulaire #}
+    <form action="{{ path('er_boxshadow_delete', {'id': advert.id}) }}" method="post">
+        <a href="{{ path('er_boxshadow_view', {'id': advert.id}) }}" class="btn btn-default">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Retour à l'annonce
+        </a>
+        {# Ici j'ai écrit le bouton de soumission à la main #}
+        <input type="submit" value="Supprimer" class="btn btn-danger" />
+        {# Ceci va générer le champ CSRF #}
+        {{ form_rest(form) }}
+    </form>
+{% endblock %}
+

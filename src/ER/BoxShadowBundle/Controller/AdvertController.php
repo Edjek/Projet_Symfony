@@ -6,11 +6,13 @@ use ER\BoxShadowBundle\Entity\Advert;
 use ER\BoxShadowBundle\Entity\Image;
 use ER\BoxShadowBundle\Form\AdvertEditType;
 use ER\BoxShadowBundle\Form\AdvertType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class AdvertController extends Controller
 {
@@ -26,13 +28,13 @@ class AdvertController extends Controller
             ->getRepository("ERBoxShadowBundle:Advert")
             ->getAdverts($page, $nbPerpage);
 
-        dump($listAdverts);
         $nbPages = ceil(count($listAdverts)/$nbPerpage);
+        if ($nbPages == 0) { $nbPages = 1; }
 
         return $this->render('ERBoxShadowBundle:Advert:index.html.twig', array(
             'listAdverts' => $listAdverts,
-            'nbPages' => $nbPages,
-            'page' => $page
+            'nbPages'     => $nbPages,
+            'page'        => $page
         ));
     }
 
@@ -60,6 +62,9 @@ class AdvertController extends Controller
         ));
     }
 
+    /**
+     * @Security("has_role('ROLE_AUTEUR')")
+     */
     public function addAction(Request $request)
     {
         $advert = new Advert();
@@ -111,7 +116,7 @@ class AdvertController extends Controller
         ));
     }
 
-    public function deleteAction($id)
+    public function deleteAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
         $advert = $em->getRepository("ERBoxShadowBundle:Advert")->find($id);
@@ -121,21 +126,32 @@ class AdvertController extends Controller
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
+        $form = $this->get('form.factory')->create();
 
-        foreach ($advert->getCategories() as $category) {
-            $advert->removeCategory($category);
-        }
-        foreach ($listApplications as $application) {
-            $em->remove($application);
-        }
-        foreach ($listAdvertSkill as $advertSkill) {
-            $em->remove($advertSkill);
-        }
-        $em->remove($advert);
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            foreach ($advert->getCategories() as $category) {
+                $advert->removeCategory($category);
+            }
+            foreach ($listApplications as $application) {
+                $em->remove($application);
+            }
+            foreach ($listAdvertSkill as $advertSkill) {
+                $em->remove($advertSkill);
+            }
+            $em->remove($advert);
+            $em->flush();
 
-        $em->flush();
+            $request->getSession()->getFlashBag()->add('info', "L'annonce a bien été supprimée.");
 
-        return new RedirectResponse($this->generateUrl('er_boxshadow_home'));
+            return $this->redirectToRoute('er_boxshadow_home');
+        }
+
+        return $this->render('ERBoxShadowBundle:Advert:delete.html.twig', array(
+            'id' => $advert->getId(),
+            'advert' => $advert,
+            'form'   => $form->createView(),
+
+        ));
     }
 
     public function menuAction($limit)
@@ -169,22 +185,23 @@ class AdvertController extends Controller
     public function testAction()
     {
         $advert = new Advert();
-        $advert->setTitle("Recherche développeur !");
-        $advert->setAuthor('Lucky Luke');
-        $advert->setContent('Tire plus vite que son ombre.');
-        $advert->setMail('luke@gmail.fr');
+        $advert->setDate(new \Datetime());  // Champ « date » OK
+        $advert->setTitle('abc');           // Champ « title » incorrect : moins de 10 caractères
+        //$advert->setContent('blabla');    // Champ « content » incorrect : on ne le définit pas
+        $advert->setAuthor('A');            // Champ « author » incorrect : moins de 2 caractères
 
-        $image = new Image();
-        $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
-        $image->setAlt('Job de rêve');
+        // On récupère le service validator
+        $validator = $this->get('validator');
 
-        $advert->setImage($image);
+        // On déclenche la validation sur notre object
+        $listErrors = $validator->is($advert);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($advert);
-        $em->flush(); // C'est à ce moment qu'est généré le slug
-
-        return new Response('Slug généré : '.$advert->getSlug());
-        // Affiche « Slug généré : recherche-developpeur »
+        // Si $listErrors n'est pas vide, on affiche les erreurs
+        if(count($listErrors) > 0) {
+            // $listErrors est un objet, sa méthode __toString permet de lister joliement les erreurs
+            return new Response((string) $listErrors);
+        } else {
+            return new Response("L'annonce est valide !");
+        }
     }
 }

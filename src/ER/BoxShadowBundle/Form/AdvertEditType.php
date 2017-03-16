@@ -2,17 +2,8 @@
 
 namespace ER\BoxShadowBundle\Form;
 
-use ER\BoxShadowBundle\Entity\Category;
-use ER\BoxShadowBundle\Repository\CategoryRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AdvertEditType extends AbstractType
 {
@@ -21,7 +12,10 @@ class AdvertEditType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->remove('date');
+        $builder
+            ->add('image',     ImageType::class, array(
+                'required' => false))
+            ->remove('date');
     }
 
     public function getParent()

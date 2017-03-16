@@ -21,3 +21,9 @@ services:
         tags:
           - { name: doctrine.event_listener, event: postPersist }
 
+    er_boxshadow.validator.antiflood:
+        class: ER\BoxShadowBundle\Validator\AntiFloodValidator
+        arguments: ["@request_stack", "@doctrine.orm.entity_manager"]
+        tags:
+          - { name: validator.constraint_validator, alias: er_boxshadow_antiflood}
+

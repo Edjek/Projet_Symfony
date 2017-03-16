@@ -4,13 +4,17 @@ namespace ER\BoxShadowBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use ER\BoxShadowBundle\Validator\AntiFlood;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Advert
  *
  * @ORM\Table(name="advert")
  * @ORM\Entity(repositoryClass="ER\BoxShadowBundle\Repository\AdvertRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @UniqueEntity(fields="title", message="Une annonce existe déjà avec ce titre.")
  */
 class Advert
 {
@@ -27,13 +31,15 @@ class Advert
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime")
+     * @Assert\DateTime()
      */
     private $date;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="title", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255, unique=true)
+     * @Assert\Length(min="10")
      */
     private $title;
 
@@ -48,6 +54,7 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="content", type="string", length=255)
+     * @Assert\NotBlank(message="Attention veuillez detailler votre annonce")
      */
     private $content;
 
@@ -55,6 +62,7 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="mail", type="string", length=255, nullable=true)
+     * @Assert\Email()
      */
     private $mail;
 
@@ -66,6 +74,7 @@ class Advert
     /**
      * @ORM\OneToOne(targetEntity="ER\BoxShadowBundle\Entity\Image", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\Valid()
      */
     private $image;
 
