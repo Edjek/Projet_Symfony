@@ -3,16 +3,13 @@
 namespace ER\BoxShadowBundle\Controller;
 
 use ER\BoxShadowBundle\Entity\Advert;
-use ER\BoxShadowBundle\Entity\Image;
 use ER\BoxShadowBundle\Form\AdvertEditType;
 use ER\BoxShadowBundle\Form\AdvertType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class AdvertController extends Controller
 {
