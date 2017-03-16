@@ -12,7 +12,9 @@ security:
     # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
         main:
-            id: fos_user.user_provider.username
+            entity:
+                class:    ER\UserBundle\Entity\User
+                property: username
         in_memory:
             memory:
                 users:
@@ -32,7 +34,7 @@ security:
             anonymous:   true
         main:
             pattern:     ^/
-            anonymous:   false
+            anonymous:   true
             provider:    main
             form_login:
                 login_path: login
@@ -40,7 +42,6 @@ security:
             logout:
                 path:    logout
                 target:  /box-shadow
-            remember_me:
-                secret:     %secret% # %secret% est un paramètre de parameter
+
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin, ip: 127.0.0.1, requires_channel: https }

@@ -18,7 +18,6 @@ class AppKernel extends Kernel
             new ER\BoxShadowBundle\ERBoxShadowBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new ER\UserBundle\ERUserBundle(),
-            new FOS\UserBundle\FOSUserBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

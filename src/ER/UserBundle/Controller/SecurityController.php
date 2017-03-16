@@ -26,4 +26,9 @@ class SecurityController extends Controller
     {
         return $this->redirectToRoute('er_boxshadow_home');
     }
+
+    public function registerAction(Request $request)
+    {
+        return $this->render('@ERUser/Security/register.html.twig');
+    }
 }
