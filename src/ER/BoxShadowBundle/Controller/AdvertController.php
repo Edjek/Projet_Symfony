@@ -3,8 +3,11 @@
 namespace ER\BoxShadowBundle\Controller;
 
 use ER\BoxShadowBundle\Entity\Advert;
+use ER\BoxShadowBundle\Event\BoxShadowEvent;
+use ER\BoxShadowBundle\Event\MessagePostEvent;
 use ER\BoxShadowBundle\Form\AdvertEditType;
 use ER\BoxShadowBundle\Form\AdvertType;
+use ER\UserBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,10 +68,16 @@ class AdvertController extends Controller
     public function addAction(Request $request)
     {
         $advert = new Advert();
+        $user = $this->getUser();
+        $advert->setUser($user);
         $form = $this->createForm(AdvertType::class, $advert);
 
         // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $event = new MessagePostEvent($advert->getContent(), $user);
+            $this->get('event_dispatcher')->dispatch(BoxShadowEvent::POST_MESSAGE, $event);
+            $advert->setContent($event->getMessage());
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($advert);
             $em->flush();

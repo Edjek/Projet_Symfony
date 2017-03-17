@@ -53,7 +53,7 @@ class Advert
     /**
      * @var string
      *
-     * @ORM\Column(name="content", type="string", length=255)
+     * @ORM\Column(name="content", type="text")
      * @Assert\NotBlank(message="Attention veuillez detailler votre annonce")
      */
     private $content;
@@ -88,6 +88,12 @@ class Advert
      * @ORM\OneToMany(targetEntity="ER\BoxShadowBundle\Entity\Application", mappedBy="advert")
      */
     private $applications;
+
+    /**
+     * @ORM\OneToOne(targetEntity="ER\UserBundle\Entity\User", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
 
     /**
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
@@ -443,5 +449,29 @@ class Advert
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \ER\UserBundle\Entity\User $user
+     *
+     * @return Advert
+     */
+    public function setUser(\ER\UserBundle\Entity\User $user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \ER\UserBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

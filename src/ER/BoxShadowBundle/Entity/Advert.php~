@@ -4,13 +4,17 @@ namespace ER\BoxShadowBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use ER\BoxShadowBundle\Validator\AntiFlood;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Advert
  *
  * @ORM\Table(name="advert")
  * @ORM\Entity(repositoryClass="ER\BoxShadowBundle\Repository\AdvertRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @UniqueEntity(fields="title", message="Une annonce existe déjà avec ce titre.")
  */
 class Advert
 {
@@ -27,13 +31,15 @@ class Advert
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime")
+     * @Assert\DateTime()
      */
     private $date;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="title", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255, unique=true)
+     * @Assert\Length(min="10")
      */
     private $title;
 
@@ -47,25 +53,16 @@ class Advert
     /**
      * @var string
      *
-     * @ORM\Column(name="content", type="text")
+     * @ORM\Column(name="content", type="string", length=255)
+     * @Assert\NotBlank(message="Attention veuillez detailler votre annonce")
      */
     private $content;
 
     /**
-     * @Gedmo\Slug(fields={"title"})
-     * @ORM\Column(name="slug", type="string", length=255, unique=true)
-     */
-    private $slug;
-    /**
-     * @ORM\OneToOne(targetEntity="ER\BoxShadowBundle\Entity\Image", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $image;
-
-    /**
      * @var string
      *
-     * @ORM\Column(name="mail", type="string", length=255)
+     * @ORM\Column(name="mail", type="string", length=255, nullable=true)
+     * @Assert\Email()
      */
     private $mail;
 
@@ -73,6 +70,30 @@ class Advert
      * @ORM\Column(name="published", type="boolean")
      */
     private $published = true;
+
+    /**
+     * @ORM\OneToOne(targetEntity="ER\BoxShadowBundle\Entity\Image", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Assert\Valid()
+     */
+    private $image;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="ER\BoxShadowBundle\Entity\Category", cascade={"persist"})
+     * @ORM\JoinTable(name="advert_category")
+     */
+    private $categories;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ER\BoxShadowBundle\Entity\Application", mappedBy="advert")
+     */
+    private $applications;
+
+    /**
+     * @ORM\OneToOne(targetEntity="ER\UserBundle\Entity\User", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
 
     /**
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
@@ -85,18 +106,14 @@ class Advert
     private $nbApplications = 0;
 
     /**
-     * @ORM\OneToMany(targetEntity="ER\BoxShadowBundle\Entity\Application", mappedBy="advert")
+     * @Gedmo\Slug(fields={"title"})
+     * @ORM\Column(name="slug", type="string", length=255, unique=true)
      */
-    private $applications;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="ER\BoxShadowBundle\Entity\Category", cascade={"persist"})
-     */
-    private $categories;
+    private $slug;
 
     public function __construct()
     {
-        $this->date = date_create();
+        $this->date = new \DateTime();
         $this->categories = new ArrayCollection();
         $this->applications = new ArrayCollection();
     }
@@ -357,7 +374,7 @@ class Advert
     /**
      * @ORM\PreUpdate()
      */
-    public function updatedate()
+    public function updateDate()
     {
         $this->setUpdatedAt(new \DateTime());
     }
@@ -408,5 +425,29 @@ class Advert
     public function getNbApplications()
     {
         return $this->nbApplications;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     *
+     * @return Advert
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
