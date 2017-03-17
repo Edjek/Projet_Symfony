@@ -3,11 +3,13 @@
 security:
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext
-        ER\UserBundle\Entity\User: plaintext
+        ER\UserBundle\Entity\User:
+            algorithm:  bcrypt
+            cost:  12
 
     role_hierarchy:
-        ROLE_ADMIN:    [ ROLE_AUTEUR, ROLE_MODERATEUR ]
-        ROLE_SUPER_ADMIN:    [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_ADMIN:    [ ROLE_AUTEUR, ROLE_MODERATEUR, ROLE_USER ]
+        ROLE_SUPER_ADMIN:    [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH, ROLE_USER ]
 
     # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
@@ -26,23 +28,20 @@ security:
         dev:
             pattern:     ^/(_(profiler|wdt)|css|images|js)/
             security:    false
-        main_login:
-            pattern:     ^/login$
-            anonymous:   true
-        main_console:
-            pattern:     ^/_console
-            anonymous:   true
         main:
             pattern:     ^/
-            anonymous:   false
+            anonymous:   ~
             provider:    main
             form_login:
-                login_path:  /login
-                check_path:  login_check
+                login_path:  security_login
+                check_path:  security_login
                 default_target_path: er_boxshadow_home
             logout:
-                path:    /logout
-                target:  login
+                path:    security_logout
+                target:  security_login
 
     access_control:
-        #- { path: ^/admin, ip: 127.0.0.1, requires_channel: https }
+        - { path: ^/_console,   roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login,      roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register,   roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/box-shadow, roles: ROLE_USER }

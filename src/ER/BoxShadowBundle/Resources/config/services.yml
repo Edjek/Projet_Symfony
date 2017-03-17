@@ -1,5 +1,5 @@
 parameters:
-    name:  rachid
+    name:  foo
 
 services:
     er_boxshadow_antispam:
@@ -7,7 +7,15 @@ services:
         arguments:
             - '@mailer'
             - '%locale%'
-            - 50
+        calls:
+            - [ setLocale, [%locale%]]
+
+    er_platform.twig.antispam_extension:
+        class: ER\BoxShadowBundle\Antispam\AntiSpamExtension
+        arguments:
+            - '@er_boxshadow_antispam'
+        tags:
+            - { name: twig.extension }
 
     er_boxshadow.email.application_mailer:
         class: ER\BoxShadowBundle\Email\ApplicationMailer
@@ -17,13 +25,17 @@ services:
     er_boxshadow.doctrine_listener.application_creation_listener:
         class: ER\BoxShadowBundle\DoctrineListener\ApplicationCreationListener
         arguments:
-          - '@er_boxshadow.email.application_mailer'
+            - '@er_boxshadow.email.application_mailer'
         tags:
-          - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postPersist }
 
     er_boxshadow.validator.antiflood:
         class: ER\BoxShadowBundle\Validator\AntiFloodValidator
-        arguments: ["@request_stack", "@doctrine.orm.entity_manager"]
+        arguments: [ '@request_stack', '@doctrine.orm.entity_manager' ]
         tags:
-          - { name: validator.constraint_validator, alias: er_boxshadow_antiflood}
+            - { name: validator.constraint_validator, alias: er_boxshadow_antiflood }
 
+    er_boxshadow.form.ckeditor:
+        class: ER\BoxShadowBundle\Form\CkeditorType
+        tags:
+            - { name: form.type, alias: ckeditor }

@@ -6,20 +6,15 @@ er_boxshadow:
     resource: "@ERBoxShadowBundle/Resources/config/routing.yml"
     prefix:   /box-shadow
 
-login:
+security_login:
     path: /login
     defaults:
         _controller: ERUserBundle:Security:login
 
-login_check:
-    path: /login_check
-    defaults:
-         _controller: ERUserBundle:Security:loginCheck
-
-register:
+security_register:
     path: /register
     defaults:
          _controller: ERUserBundle:Security:register
 
-logout:
+security_logout:
     path: /logout

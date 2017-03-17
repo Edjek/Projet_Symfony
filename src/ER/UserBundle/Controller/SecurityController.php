@@ -12,30 +12,30 @@ class SecurityController extends Controller
 {
     public function loginAction(Request $request)
     {
-        if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
-            return $this->redirectToRoute('er_boxshadow_home');
-        }
+        $authenticationUtils = $this->get('security.authentication_utils');
 
-        $authenticatedUtils = $this->get('security.authentication_utils');
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('ERUserBundle:security:login.html.twig', array(
-            'last_username' => $authenticatedUtils->getLastUsername(),
-            'error'         => $authenticatedUtils->getLastAuthenticationError(),
+            'last_username' => $lastUsername,
+            'error'         => $error,
         ));
-    }
-
-    public function loginCheckAction(Request $request)
-    {
-        return $this->redirectToRoute('er_boxshadow_home');
     }
 
     public function registerAction(Request $request)
     {
         $user = new User();
-        $form = $this->get('form.factory')->create(UserType::class, $user);
+        $form = $this->createForm(UserType::class, $user);
 
         // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $password = $this->get('security.password_encoder')
+                ->encodePassword($user, $user->getPassword());
+            $user->setPassword($password);
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();

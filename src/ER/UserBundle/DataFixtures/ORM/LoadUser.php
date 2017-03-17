@@ -11,7 +11,7 @@ class LoadUser implements FixtureInterface
     public function load(ObjectManager $manager)
     {
         // Les noms d'utilisateurs à créer
-        $listNames = array('Alexandre', 'Marine', 'Anna');
+        $listNames = array('Alain', 'toto', 'foo');
 
         foreach ($listNames as $name) {
             // On crée l'utilisateur
@@ -19,7 +19,7 @@ class LoadUser implements FixtureInterface
 
             // Le nom d'utilisateur et le mot de passe sont identiques pour l'instant
             $user->setUsername($name);
-            $user->setPassword($name);
+            $user->setPassword('$2y$12$JC.E7NsYXkLD788AY3GaY.BnAVN4xRJKYuuA6xDem4fGUTfKM3wi.');
 
             // On ne se sert pas du sel pour l'instant
             $user->setSalt('');

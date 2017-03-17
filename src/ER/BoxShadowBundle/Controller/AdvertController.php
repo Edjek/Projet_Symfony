@@ -65,7 +65,7 @@ class AdvertController extends Controller
     public function addAction(Request $request)
     {
         $advert = new Advert();
-        $form = $this->get('form.factory')->create(AdvertType::class, $advert);
+        $form = $this->createForm(AdvertType::class, $advert);
 
         // Si la requête est en POST, c'est que le visiteur a soumis le formulaire
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {

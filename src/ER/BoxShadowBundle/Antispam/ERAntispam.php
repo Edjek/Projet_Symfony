@@ -5,14 +5,18 @@ namespace ER\BoxShadowBundle\Antispam;
 class ERAntispam
 {
     private $mailer;
-    private $myself;
+    private $locale;
     private $minLenght;
 
-    public function __construct(\Swift_Mailer $mailer, $myself, $minLenght )
+    public function __construct(\Swift_Mailer $mailer, $minLenght )
     {
         $this->mailer = $mailer;
-        $this->myself = $myself;
         $this->minLenght = $minLenght;
+    }
+
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
     }
 
     public function isSpam($text)

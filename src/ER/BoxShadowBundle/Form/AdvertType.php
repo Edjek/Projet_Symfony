@@ -29,13 +29,13 @@ class AdvertType extends AbstractType
             ->add('date',      DateType::class)
             ->add('title',     TextType::class)
             ->add('author',    TextType::class)
-            ->add('content',   TextareaType::class, array('required' =>false))
+            ->add('content',   CkeditorType::class)
             ->add('image',     ImageType::class)
             ->add('categories',EntityType::class, array(
-                'class' => Category::class,
-                'choice_label' => 'name',
-                'multiple'     => true,
-                'expanded'     => false,
+                'class'         => Category::class,
+                'choice_label'  => 'name',
+                'multiple'      => true,
+                'expanded'      => false,
                 'query_builder' => function(CategoryRepository $repository) use($pattern) {
                     return $repository->getLikeQueryBuilder($pattern);
                 }

@@ -37,6 +37,11 @@ class User implements UserInterface
     private $password;
 
     /**
+     * @var
+     */
+    private $plainPassword;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="salt", type="string", length=255)
@@ -44,17 +49,12 @@ class User implements UserInterface
     private $salt;
 
     /**
-     * @var array
+     * @var []
      *
      * @ORM\Column(name="roles", type="array")
      */
-    private $roles = array();
+    private $roles = [];
 
-    public function __construct()
-    {
-        $this->salt = md5(uniqid(null, true));
-        $this->roles[] = 'ROLE_ADMIN';
-    }
 
     /**
      * Get id
@@ -145,11 +145,27 @@ class User implements UserInterface
      *
      * @return User
      */
-    public function setRoles($roles)
+    public function setRoles(array $roles = [])
     {
         $this->roles = $roles;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param mixed $plainPassword
+     */
+    public function setPlainPassword($plainPassword)
+    {
+        $this->plainPassword = $plainPassword;
     }
 
     /**
@@ -164,6 +180,6 @@ class User implements UserInterface
 
     public function eraseCredentials()
     {
-
+        $this->password = null;
     }
 }
