@@ -2,7 +2,6 @@
 
 namespace ER\BoxShadowBundle\Antispam;
 
-
 class AntiSpamExtension extends \Twig_Extension
 {
     /**
@@ -20,7 +19,6 @@ class AntiSpamExtension extends \Twig_Extension
         return $this->erAntispam->isSpam($text);
     }
 
-
     // Twig va exécuter cette méthode pour savoir quelle(s) fonction(s) ajoute notre service
     public function getFunctions()
     {
@@ -29,12 +27,10 @@ class AntiSpamExtension extends \Twig_Extension
         );
     }
 
-
     // La méthode getName() identifie votre extension Twig, elle est obligatoire
     public function getName()
     {
         return 'ERAntispam';
 
     }
-
 }

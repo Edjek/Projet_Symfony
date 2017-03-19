@@ -23,7 +23,8 @@ class ApplicationMailer
             'Vous avez reçu une nouvelle candidature.'
         );
 
-        $message->addTo($application->getAdvert()->getMail())
+        $message
+            ->addTo($application->getAdvert()->getMail())
             ->addFrom('admin@bowshadow.com');
 
         $this->mailer->send($message);

@@ -23,5 +23,4 @@ class ERAntispam
     {
         return strlen($text) < $this->minLenght;
     }
-
 }

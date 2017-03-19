@@ -21,7 +21,7 @@ class UserType extends AbstractType
             ->add('password', PasswordType::class)
             ->remove('salt')
             ->remove('roles')
-            ->add('save',     SubmitType::class);;
+            ->add('register', SubmitType::class);;
     }
     
     /**
@@ -41,6 +41,4 @@ class UserType extends AbstractType
     {
         return 'er_userbundle_user';
     }
-
-
 }

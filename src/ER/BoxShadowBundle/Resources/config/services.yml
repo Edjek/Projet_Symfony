@@ -1,6 +1,3 @@
-parameters:
-    name:  foo
-
 services:
     er_boxshadow_antispam:
         class: ER\BoxShadowBundle\Antispam\ERAntispam

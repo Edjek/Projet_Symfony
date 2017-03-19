@@ -12,6 +12,8 @@ class SecurityController extends Controller
 {
     public function loginAction(Request $request)
     {
+        $user = new User();
+        $form = $this->createForm(UserType::class, $user);
         $authenticationUtils = $this->get('security.authentication_utils');
 
         // get the login error if there is one
@@ -21,6 +23,7 @@ class SecurityController extends Controller
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('ERUserBundle:security:login.html.twig', array(
+            'form' => $form->createView(),
             'last_username' => $lastUsername,
             'error'         => $error,
         ));
