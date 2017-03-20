@@ -22,7 +22,7 @@ class LoadUser implements FixtureInterface
             $user->setPassword('$2y$12$JC.E7NsYXkLD788AY3GaY.BnAVN4xRJKYuuA6xDem4fGUTfKM3wi.');
 
             // On ne se sert pas du sel pour l'instant
-            $user->setSalt('');
+            $user->setSalt(md5(uniqid(null, true)));
 
             // On définit uniquement le role ROLE_USER qui est le role de base
             $user->setRoles(array('ROLE_ADMIN'));

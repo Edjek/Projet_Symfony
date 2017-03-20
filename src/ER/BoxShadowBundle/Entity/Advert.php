@@ -90,7 +90,7 @@ class Advert
     private $applications;
 
     /**
-     * @ORM\OneToOne(targetEntity="ER\UserBundle\Entity\User", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="ER\UserBundle\Entity\User", inversedBy="advert")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;

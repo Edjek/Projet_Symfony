@@ -44,7 +44,20 @@ services:
         class: ER\BoxShadowBundle\Listener\BetaListener
         arguments:
             - '@er_boxshadow.beta.html_adder'
-            - '2017-06-01'
+            - '2017-03-28'
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: processBeta }
+            - { name: kernel.event_listener, event: kernel.response, method: ignoreBeta }
 
+    er_boxshadow.bigbrother.message_notificator:
+        class: ER\BoxShadowBundle\BigBrother\MessageNotificator
+        arguments:
+            - '@mailer'
+
+    er_boxshadow.listener.message_listener:
+        class: ER\BoxShadowBundle\Listener\MessageListener
+        arguments:
+            - '@er_boxshadow.bigbrother.message_notificator'
+            - ['foo', 'douxx', 'dihcar']
+        tags:
+            - { name: kernel.event_listener, event: er_boxshadow.post_message, method: processMessage }

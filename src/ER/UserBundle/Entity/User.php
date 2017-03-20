@@ -50,6 +50,11 @@ class User implements UserInterface
      */
     private $roles = array();
 
+    /**
+     * @ORM\OneToMany(targetEntity="ER\BoxShadowBundle\Entity\Advert", mappedBy="user")
+     */
+    private $advert;
+
     public function __construct()
     {
         $this->salt = md5(uniqid(null, true));
