@@ -4,10 +4,10 @@ namespace ER\BoxShadowBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use ER\BoxShadowBundle\Validator\AntiFlood;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Advert
  *
@@ -53,7 +53,7 @@ class Advert
     /**
      * @var string
      *
-     * @ORM\Column(name="content", type="string", length=255)
+     * @ORM\Column(name="content", type="text")
      * @Assert\NotBlank(message="Attention veuillez detailler votre annonce")
      */
     private $content;
@@ -90,7 +90,7 @@ class Advert
     private $applications;
 
     /**
-     * @ORM\OneToOne(targetEntity="ER\UserBundle\Entity\User", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="ER\UserBundle\Entity\User", inversedBy="advert")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
@@ -449,5 +449,29 @@ class Advert
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \ER\UserBundle\Entity\User $user
+     *
+     * @return Advert
+     */
+    public function setUser(\ER\UserBundle\Entity\User $user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \ER\UserBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

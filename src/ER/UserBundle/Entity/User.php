@@ -171,4 +171,38 @@ class User implements UserInterface
     {
 
     }
+
+    /**
+     * Add advert
+     *
+     * @param \ER\BoxShadowBundle\Entity\Advert $advert
+     *
+     * @return User
+     */
+    public function addAdvert(\ER\BoxShadowBundle\Entity\Advert $advert)
+    {
+        $this->advert[] = $advert;
+
+        return $this;
+    }
+
+    /**
+     * Remove advert
+     *
+     * @param \ER\BoxShadowBundle\Entity\Advert $advert
+     */
+    public function removeAdvert(\ER\BoxShadowBundle\Entity\Advert $advert)
+    {
+        $this->advert->removeElement($advert);
+    }
+
+    /**
+     * Get advert
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAdvert()
+    {
+        return $this->advert;
+    }
 }

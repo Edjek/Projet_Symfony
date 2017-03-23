@@ -15,10 +15,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AdvertController extends Controller
 {
+    /**
+     * @param $page
+     * @return Response
+     */
     public function indexAction($page)
     {
         if ($page < 1) {
-            throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
+            throw new NotFoundHttpException('Page "' . $page . '" inexistante.');
         }
         $nbPerpage = 3;
 
@@ -27,28 +31,25 @@ class AdvertController extends Controller
             ->getRepository("ERBoxShadowBundle:Advert")
             ->getAdverts($page, $nbPerpage);
 
-        $nbPages = ceil(count($listAdverts)/$nbPerpage);
-        if ($nbPages == 0) { $nbPages = 1; }
+        $nbPages = ceil(count($listAdverts) / $nbPerpage);
+        if ($nbPages == 0) {
+            $nbPages = 1;
+        }
 
         return $this->render('ERBoxShadowBundle:Advert:index.html.twig', array(
             'listAdverts' => $listAdverts,
-            'nbPages'     => $nbPages,
-            'page'        => $page
+            'nbPages' => $nbPages,
+            'page' => $page
         ));
     }
 
-    public function viewAction($id)
+    /**
+     * @param Advert $advert
+     * @return Response
+     */
+    public function viewAction(Advert $advert)
     {
         $em = $this->getDoctrine()->getManager();
-        $advert = $em->getRepository('ERBoxShadowBundle:Advert')->find($id);
-
-        if (null === $advert) {
-            throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
-        }
-
-        $listApplications = $em
-            ->getRepository('ERBoxShadowBundle:Application')
-            ->findBy(array('advert'=> $advert));
 
         $listAdvertSkills = $em
             ->getRepository("ERBoxShadowBundle:AdvertSkill")
@@ -56,13 +57,16 @@ class AdvertController extends Controller
 
         return $this->render('ERBoxShadowBundle:Advert:view.html.twig', array(
             'advert' => $advert,
-            'listApplications' => $listApplications,
+            'listApplications' => $advert->getApplications(),
             'listAdvertSkills' => $listAdvertSkills
         ));
     }
 
     /**
      * @Security("has_role('ROLE_AUTEUR')")
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
      */
     public function addAction(Request $request)
     {
@@ -92,15 +96,14 @@ class AdvertController extends Controller
         ));
     }
 
-    public function editAction($id, Request $request)
+    /**
+     * @param Request $request
+     * @param Advert $advert
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
+    public function editAction(Request $request, Advert $advert)
     {
         $em = $this->getDoctrine()->getManager();
-
-        $advert = $em->getRepository("ERBoxShadowBundle:Advert")->find($id);
-
-        if (null === $advert) {
-            throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
-        }
 
         $form = $this->get('form.factory')->create(AdvertEditType::class, $advert);
 
@@ -120,6 +123,11 @@ class AdvertController extends Controller
         ));
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
     public function deleteAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -128,7 +136,7 @@ class AdvertController extends Controller
         $listApplications = $em->getRepository("ERBoxShadowBundle:Application")->findBy(array('advert' => $advert));
 
         if (null === $advert) {
-            throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+            throw new NotFoundHttpException("L'annonce d'id " . $id . " n'existe pas.");
         }
         $form = $this->get('form.factory')->create();
 
@@ -153,11 +161,15 @@ class AdvertController extends Controller
         return $this->render('ERBoxShadowBundle:Advert:delete.html.twig', array(
             'id' => $advert->getId(),
             'advert' => $advert,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
 
         ));
     }
 
+    /**
+     * @param $limit
+     * @return Response
+     */
     public function menuAction($limit)
     {
         $em = $this->getDoctrine()->getManager();
@@ -172,6 +184,7 @@ class AdvertController extends Controller
             'listAdverts' => $listAdverts
         ));
     }
+
 
     public function listAction()
     {
@@ -201,9 +214,9 @@ class AdvertController extends Controller
         $listErrors = $validator->is($advert);
 
         // Si $listErrors n'est pas vide, on affiche les erreurs
-        if(count($listErrors) > 0) {
+        if (count($listErrors) > 0) {
             // $listErrors est un objet, sa méthode __toString permet de lister joliement les erreurs
-            return new Response((string) $listErrors);
+            return new Response((string)$listErrors);
         } else {
             return new Response("L'annonce est valide !");
         }

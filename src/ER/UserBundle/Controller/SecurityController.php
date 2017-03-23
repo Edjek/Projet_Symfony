@@ -3,14 +3,13 @@
 namespace ER\UserBundle\Controller;
 
 use ER\UserBundle\Entity\User;
-use ER\UserBundle\ERUserBundle;
 use ER\UserBundle\Form\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 class SecurityController extends Controller
 {
-    public function loginAction(Request $request)
+    public function loginAction()
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
