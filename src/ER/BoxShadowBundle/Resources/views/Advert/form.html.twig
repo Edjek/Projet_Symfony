@@ -5,13 +5,13 @@
     {{ form_errors(form) }}
 
     {% if form.date is defined %}.
-    <div class="form-group">
-        {{ form_label(form.date, "Date", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
-        {{ form_errors(form.date, {'attr': {'class': 'form-control'}}) }}
-        <div class="col-sm-10">
-            {{ form_widget(form.date) }}
+        <div class="form-group">
+            {{ form_label(form.date, "Date", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+            {{ form_errors(form.date, {'attr': {'class': 'form-control'}}) }}
+            <div class="col-sm-10">
+                {{ form_widget(form.date) }}
+            </div>
         </div>
-    </div>
     {% endif %}
 
     <div class="form-group">
@@ -54,7 +54,7 @@
         {{ form_label(form.categories, "Categories", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
         {{ form_errors(form.categories) }}
         <div class="col-sm-10">
-        {{ form_widget(form.categories) }}
+            {{ form_widget(form.categories) }}
         </div>
     </div>
 
@@ -84,7 +84,7 @@
 #}
 {# Voici le script en question : #}
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         // On récupère la balise <div> en question qui contient l'attribut « data-prototype » qui nous intéresse.
         var $container = $('div#advert_categories');
 
@@ -92,7 +92,7 @@
         var index = $container.find(':input').length;
 
         // On ajoute un nouveau champ à chaque clic sur le lien d'ajout.
-        $('#add_category').click(function(e) {
+        $('#add_category').click(function (e) {
             addCategory($container);
             e.preventDefault(); // évite qu'un # apparaisse dans l'URL
             return false;
@@ -103,7 +103,7 @@
             addCategory($container);
         } else {
             // S'il existe déjà des catégories, on ajoute un lien de suppression pour chacune d'entre elles
-            $container.children('div').each(function() {
+            $container.children('div').each(function () {
                 addDeleteLink($(this));
             });
         }
@@ -114,8 +114,8 @@
             // - le texte "__name__label__" qu'il contient par le label du champ
             // - le texte "__name__" qu'il contient par le numéro du champ
             var template = $container.attr('data-prototype')
-                    .replace(/__name__label__/g, 'Catégorie n°' + (index+1))
-                    .replace(/__name__/g,        index)
+                    .replace(/__name__label__/g, 'Catégorie n°' + (index + 1))
+                    .replace(/__name__/g, index)
                 ;
 
             // On crée un objet jquery qui contient ce template
@@ -140,7 +140,7 @@
             $prototype.append($deleteLink);
 
             // Ajout du listener sur le clic du lien pour effectivement supprimer la catégorie
-            $deleteLink.click(function(e) {
+            $deleteLink.click(function (e) {
                 $prototype.remove();
                 e.preventDefault(); // évite qu'un # apparaisse dans l'URL
                 return false;

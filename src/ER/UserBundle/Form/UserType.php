@@ -23,7 +23,7 @@ class UserType extends AbstractType
             ->remove('roles')
             ->add('register', SubmitType::class);;
     }
-    
+
     /**
      * {@inheritdoc}
      */

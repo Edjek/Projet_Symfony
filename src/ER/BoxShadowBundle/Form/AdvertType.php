@@ -25,25 +25,25 @@ class AdvertType extends AbstractType
         $pattern = '%';
 
         $builder
-            ->add('date',      DateType::class)
-            ->add('title',     TextType::class)
-            ->add('author',    TextType::class)
-            ->add('content',   CkeditorType::class)
-            ->add('image',     ImageType::class)
-            ->add('categories',EntityType::class, array(
-                'class'         => Category::class,
-                'choice_label'  => 'name',
-                'multiple'      => true,
-                'expanded'      => false,
-                'query_builder' => function(CategoryRepository $repository) use($pattern) {
+            ->add('date', DateType::class)
+            ->add('title', TextType::class)
+            ->add('author', TextType::class)
+            ->add('content', CkeditorType::class)
+            ->add('image', ImageType::class)
+            ->add('categories', EntityType::class, array(
+                'class' => Category::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => false,
+                'query_builder' => function (CategoryRepository $repository) use ($pattern) {
                     return $repository->getLikeQueryBuilder($pattern);
                 }
             ))
-            ->add('save',      SubmitType::class);
+            ->add('save', SubmitType::class);
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,    // 1er argument : L'évènement qui nous intéresse : ici, PRE_SET_DATA
-            function(FormEvent $event) { // 2e argument : La fonction à exécuter lorsque l'évènement est déclenché
+            function (FormEvent $event) { // 2e argument : La fonction à exécuter lorsque l'évènement est déclenché
                 // On récupère notre objet Advert sous-jacent
                 $advert = $event->getData();
 
@@ -63,7 +63,7 @@ class AdvertType extends AbstractType
             }
         );
     }
-    
+
     /**
      * {@inheritdoc}
      */

@@ -51,7 +51,7 @@ class Application
 
     public function __construct()
     {
-        $this ->date = date_create();
+        $this->date = date_create();
     }
 
     /**

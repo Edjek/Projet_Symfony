@@ -13,7 +13,7 @@ class ApplicationCreationListener
      */
     private $applicationMailer;
 
-    public function __construct(ApplicationMailer $applicationMailer )
+    public function __construct(ApplicationMailer $applicationMailer)
     {
         $this->applicationMailer = $applicationMailer;
     }

@@ -45,7 +45,6 @@ class Image
      * Get file
      *
      * @return string
-
      */
     public function getFile()
     {
@@ -121,7 +120,7 @@ class Image
 
         // Si on avait un ancien fichier, on le supprime
         if (null !== $this->tempFilename) {
-            $oldFile = $this->getUploadRootDir().'/'.$this->id.'.'.$this->tempFilename;
+            $oldFile = $this->getUploadRootDir() . '/' . $this->id . '.' . $this->tempFilename;
             if (file_exists($oldFile)) {
                 unlink($oldFile);
             }
@@ -130,7 +129,7 @@ class Image
         // On déplace le fichier envoyé dans le répertoire de notre choix
         $this->file->move(
             $this->getUploadRootDir(), // Le répertoire de destination
-            $this->getId().'.'.$this->getUrl()   // Le nom du fichier à créer, ici « id.extension »
+            $this->getId() . '.' . $this->getUrl()   // Le nom du fichier à créer, ici « id.extension »
         );
     }
 
@@ -140,7 +139,7 @@ class Image
     public function preRemoveUpload()
     {
         // On sauvegarde temporairement le nom du fichier, car il dépend de l'id
-        $this->tempFilename = $this->getUploadRootDir().'/'.$this->id.'.'.$this->url;
+        $this->tempFilename = $this->getUploadRootDir() . '/' . $this->id . '.' . $this->url;
     }
 
     /**
@@ -164,12 +163,12 @@ class Image
     protected function getUploadRootDir()
     {
         // On retourne le chemin relatif vers l'image pour notre code PHP
-        return __DIR__.'/../../../../web/'.$this->getUploadDir();
+        return __DIR__ . '/../../../../web/' . $this->getUploadDir();
     }
 
     public function getWebPath()
     {
-        return $this->getUploadDir().'/'.$this->getId().'.'.$this->getUrl();
+        return $this->getUploadDir() . '/' . $this->getId() . '.' . $this->getUrl();
     }
 
     /**

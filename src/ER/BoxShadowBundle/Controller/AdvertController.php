@@ -13,6 +13,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Class AdvertController
+ * @package ER\BoxShadowBundle\Controller
+ */
 class AdvertController extends Controller
 {
     /**
@@ -162,7 +166,6 @@ class AdvertController extends Controller
             'id' => $advert->getId(),
             'advert' => $advert,
             'form' => $form->createView(),
-
         ));
     }
 
@@ -184,7 +187,6 @@ class AdvertController extends Controller
             'listAdverts' => $listAdverts
         ));
     }
-
 
     public function listAction()
     {

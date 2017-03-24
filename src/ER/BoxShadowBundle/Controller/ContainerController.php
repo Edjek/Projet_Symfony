@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class ContainerController extends Controller
 {
-
     public function mailerAction()
     {
         $antispam = $this->get('er_boxshadow_antispam');

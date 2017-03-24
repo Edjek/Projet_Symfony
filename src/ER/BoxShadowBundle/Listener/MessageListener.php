@@ -27,7 +27,7 @@ class MessageListener implements EventSubscriberInterface
     {
         // On retourne un tableau « nom de l'évènement » => « méthode à exécuter »
         return array(
-            BoxShadowEvents::POST_MESSAGE    => 'processMessage',
+            BoxShadowEvents::POST_MESSAGE => 'processMessage',
         );
     }
 

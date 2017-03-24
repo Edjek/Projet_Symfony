@@ -18,7 +18,7 @@ class BetaListener
     public function __construct(BetaHTMLAdder $betaHTML, $endDate)
     {
         $this->betaHTML = $betaHTML;
-        $this->endDate  = new \Datetime($endDate);
+        $this->endDate = new \Datetime($endDate);
     }
 
     public function processBeta(FilterResponseEvent $event)

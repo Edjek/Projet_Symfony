@@ -20,7 +20,7 @@ class AdvertRepository extends EntityRepository
             ->addSelect('app');
 
         return $qb->getQuery()
-        ->getResult();
+            ->getResult();
     }
 
     public function getAdvertWithCategories(array $categoryNames)
@@ -41,15 +41,13 @@ class AdvertRepository extends EntityRepository
             ->addSelect('i')
             ->leftJoin('a.categories', 'c')
             ->addSelect('c')
-            ->getQuery()
-        ;
+            ->getQuery();
 
         $query
             // On définit l'annonce à partir de laquelle commencer la liste
-            ->setFirstResult(($page-1) * $nbPerPage)
+            ->setFirstResult(($page - 1) * $nbPerPage)
             // Ainsi que le nombre d'annonce à afficher sur une page
-            ->setMaxResults($nbPerPage)
-        ;
+            ->setMaxResults($nbPerPage);
 
         // Enfin, on retourne l'objet Paginator correspondant à la requête construite
         // (n'oubliez pas le use correspondant en début de fichier)

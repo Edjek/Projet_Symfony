@@ -15,7 +15,6 @@ class CategoryRepository extends \Doctrine\ORM\EntityRepository
         return $this
             ->createQueryBuilder('c')
             ->where('c.name LIKE :pattern')
-            ->setParameter('pattern', $pattern)
-            ;
+            ->setParameter('pattern', $pattern);
     }
 }

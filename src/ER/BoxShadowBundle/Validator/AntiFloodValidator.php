@@ -9,15 +9,31 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class AntiFloodValidator extends ConstraintValidator
 {
+    /**
+     * @var RequestStack
+     */
     private $requestStack;
+
+    /**
+     * @var EntityManagerInterface
+     */
     private $em;
 
-    public function __construct(RequestStack $requestStack,EntityManagerInterface $em)
+    /**
+     * AntiFloodValidator constructor.
+     * @param RequestStack $requestStack
+     * @param EntityManagerInterface $em
+     */
+    public function __construct(RequestStack $requestStack, EntityManagerInterface $em)
     {
         $this->requestStack = $requestStack;
         $this->em = $em;
     }
 
+    /**
+     * @param mixed $value
+     * @param Constraint $constraint
+     */
     public function validate($value, Constraint $constraint)
     {
         $request = $this->requestStack->getCurrentRequest();

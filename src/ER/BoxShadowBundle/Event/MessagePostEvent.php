@@ -2,8 +2,8 @@
 
 namespace ER\BoxShadowBundle\Event;
 
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class MessagePostEvent extends Event
 {
@@ -13,7 +13,7 @@ class MessagePostEvent extends Event
     public function __construct($message, UserInterface $user)
     {
         $this->message = $message;
-        $this->user    = $user;
+        $this->user = $user;
     }
 
     public function getMessage()

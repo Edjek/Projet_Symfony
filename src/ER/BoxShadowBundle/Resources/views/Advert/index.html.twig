@@ -11,22 +11,22 @@
     <h2>Liste des annonces</h2>
 
     {% if listAdverts|length > 0 %}
-    <ul>
-        {% for advert in listAdverts %}
-            <li>
-                <a href="{{ path('er_boxshadow_view', {'id': advert.id}) }}">
-                    {{ advert.title }}
-                </a>
-                par {{ advert.author }},
-                le {{ advert.date|date('d/m/Y') }}
-                {% if advert.image is not null %}
-                <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}">
+        <ul>
+            {% for advert in listAdverts %}
+                <li>
+                    <a href="{{ path('er_boxshadow_view', {'id': advert.id}) }}">
+                        {{ advert.title }}
+                    </a>
+                    par {{ advert.author }},
+                    le {{ advert.date|date('d/m/Y') }}
+                    {% if advert.image is not null %}
+                        <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}">
                     {% endif %}
-            </li>
-        {% else %}
-            <li>Pas (encore !) d'annonces</li>
-        {% endfor %}
-    </ul>
+                </li>
+            {% else %}
+                <li>Pas (encore !) d'annonces</li>
+            {% endfor %}
+        </ul>
     {% endif %}
     <ul class="pagination">
         {# On utilise la fonction range(a, b) qui crée un tableau de valeurs entre a et b #}

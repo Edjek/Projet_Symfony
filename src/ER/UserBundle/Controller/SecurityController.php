@@ -24,7 +24,7 @@ class SecurityController extends Controller
         return $this->render('ERUserBundle:security:login.html.twig', array(
             'form' => $form->createView(),
             'last_username' => $lastUsername,
-            'error'         => $error,
+            'error' => $error,
         ));
     }
 
